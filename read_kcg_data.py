@@ -47,4 +47,4 @@ if __name__ == "__main__":
     # Ép Flask bật dòng WARNING màu đỏ và chạy trên host 0.0.0.0 chuẩn đề bài
     app.run(host="0.0.0.0", port=5000, debug=True)
     /test
-    
+    /2.0
