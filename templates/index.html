@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動資料檢視</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 700px;
+        }
+        /* CSS tạo ô bo góc màu xám giống hệt ảnh mẫu */
+        .card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333333;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .author {
+            font-size: 16px;
+            color: #555555;
+            margin-bottom: 12px;
+        }
+        .info-line {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 6px 0;
+            word-break: break-all;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% for row in activities %}
+        <div class="card">
+            <div class="card-title">第 {{ loop.index }} 筆資料</div>
+            
+            {% if row.get('Org') or row.get('author') %}
+            <div class="author">author {{ row.get('Org', row.get('author', '無')) }}</div>
+            {% endif %}
+
+            {% if row.get('Name') %}
+            <div class="info-line"><span class="label">【標題】</span> {{ row.get('Name') }}</div>
+            {% endif %}
+            
+            {% if row.get('Description') or row.get('簡介') %}
+            <div class="info-line"><span class="label">【簡介】</span> {{ row.get('Description', row.get('簡介', '無')) }}</div>
+            {% endif %}
+
+            {% if row.get('Add') or row.get('Location') %}
+            <div class="info-line"><span class="label">【地點】</span> {{ row.get('Add', row.get('Location', '無')) }}</div>
+            {% endif %}
+            
+            {% if row.get('Start') or row.get('開始日期') %}
+            <div class="info-line"><span class="label">【開始日期】</span> {{ row.get('Start', row.get('開始日期', '無')) }}</div>
+            {% endif %}
+            
+            {% if row.get('End') or row.get('結束日期') %}
+            <div class="info-line"><span class="label">【結束日期】</span> {{ row.get('End', row.get('結束日期', '無')) }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
+/test
