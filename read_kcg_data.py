@@ -2,10 +2,7 @@
 import ssl
 import urllib.request
 
-DATA_URL = (
-    "https://data.kcg.gov.tw/File/DirectDownload/"
-    "80bbbbd3-9ee4-4244-98e9-b4c08deda91b"
-)
+DATA_URL = "https://data.ntpc.gov.tw/api/datasets/781b822e-214a-4b9a-b4db-32c9f4626d98/csv/file"
 
 
 def fetch_csv_text(url: str) -> str:
@@ -18,37 +15,34 @@ def fetch_csv_text(url: str) -> str:
     return raw.decode("utf-8-sig")
 
 
-def parse_activities(csv_text: str) -> list[dict[str, str]]:
-    """Parse the CSV text into a list of dictionaries."""
+def parse_activities(csv_text: str) -> tuple[list[dict[str, str]], list[str]]:
+    """Parse the CSV text into a list of dictionaries and return headers."""
     reader = csv.DictReader(csv_text.splitlines())
-    return [row for row in reader]
+    rows = [row for row in reader]
+    return rows, reader.fieldnames or []
 
 
-def display_activities(rows: list[dict[str, str]], limit: int = 20) -> None:
-    """Print activity rows with the most important fields."""
+def display_activities(rows: list[dict[str, str]], headers: list[str], limit: int = 20) -> None:
+    """Print activity rows and all available fields for verification."""
     if not rows:
         print("沒有找到任何活動資料。")
         return
 
     print("===== 活動資料 =====")
-    print(f"總筆數：{len(rows)}\n")
+    print(f"總筆數：{len(rows)}")
+    print(f"欄位數：{len(headers)}")
+    print("欄位名稱：" + ", ".join(headers) + "\n")
 
-    for idx, row in enumerate(rows[:limit], 1):
-        print(f"===== 第 {idx} 筆資料 =====")
-        print(f"Id          : {row.get('Id', '')}")
-        print(f"Name        : {row.get('Name', '')}")
-        print(f"Description : {row.get('Description', '')}")
-        print(f"Participation: {row.get('Particpation', '')}")
-        print(f"Location    : {row.get('Location', '')}")
-        print(f"Add         : {row.get('Add', '')}")
-        print(f"Tel         : {row.get('Tel', '')}")
-        print(f"Org         : {row.get('Org', '')}")
-        print(f"Start       : {row.get('Start', '')}")
-        print(f"End         : {row.get('End', '')}")
-        print(f"Map         : {row.get('Map', '')}")
-        print(f"Px          : {row.get('Px', '')}")
-        print(f"Py          : {row.get('Py', '')}")
-        print(f"Changetime  : {row.get('Changetime', '')}\n")
+    max_rows = len(rows) if limit is None else min(len(rows), limit)
+    for idx in range(max_rows):
+        row = rows[idx]
+        print(f"===== 第 {idx + 1} 筆資料 =====")
+        for header in headers:
+            print(f"{header:20}: {row.get(header, '')}")
+        print()
+
+    if limit is not None and len(rows) > limit:
+        print(f"已顯示前 {limit} 筆資料。若要顯示全部資料，請將 limit 設為 None。")
 
     print("顯示完畢。")
 
@@ -58,8 +52,8 @@ def main() -> None:
     print("URL: " + DATA_URL)
 
     csv_text = fetch_csv_text(DATA_URL)
-    rows = parse_activities(csv_text)
-    display_activities(rows, limit=20)
+    rows, headers = parse_activities(csv_text)
+    display_activities(rows, headers, limit=None)
 
 
 if __name__ == "__main__":
